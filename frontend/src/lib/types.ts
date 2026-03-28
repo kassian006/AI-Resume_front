@@ -1,3 +1,4 @@
+
 export type SessionStatus = "queued" | "processing" | "completed" | "failed" | "stopped";
 export type SessionType = "improve" | "match";
 
@@ -13,12 +14,14 @@ export interface User {
   created_at: string;
 }
 
+
 export interface ResumeSessionListItem {
   session_id: number;
   resume_file_id: number;
   filename: string;
   status: SessionStatus;
   current_iteration: number;
+  session_type: SessionType;
   created_at: string;
   updated_at: string;
 }
@@ -41,6 +44,7 @@ export interface ResumeSessionDetail {
   filename: string;
   status: SessionStatus;
   current_iteration: number;
+  session_type: SessionType;
   result: ResumeAnalysisResult;
   created_at: string;
   updated_at: string;
