@@ -33,9 +33,10 @@ export default function SessionDetailPage() {
         const detailData = await getSessionDetail(sessionId);
         if (cancelled) return;
 
+        setAnalysis(detailData);
+
         if (detailData.session_type === "match") {
           setMode("match");
-          setAnalysis(detailData);
 
           const matchData = await getSessionMatches(sessionId);
           if (cancelled) return;
@@ -43,7 +44,6 @@ export default function SessionDetailPage() {
           setMatches(matchData);
         } else {
           setMode("analysis");
-          setAnalysis(detailData);
           setMatches(null);
         }
       } catch (err) {
@@ -67,15 +67,27 @@ export default function SessionDetailPage() {
   }, [sessionId]);
 
   if (loading && !analysis && !matches) {
-    return <div className="min-h-screen bg-[#09090b] p-10 text-white">Загрузка...</div>;
+    return (
+      <div className="min-h-screen bg-[#09090b] p-10 text-white">
+        Загрузка...
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="min-h-screen bg-[#09090b] p-10 text-red-400">{error}</div>;
+    return (
+      <div className="min-h-screen bg-[#09090b] p-10 text-red-400">
+        {error}
+      </div>
+    );
   }
 
   if (!analysis) {
-    return <div className="min-h-screen bg-[#09090b] p-10 text-white">Ничего не найдено.</div>;
+    return (
+      <div className="min-h-screen bg-[#09090b] p-10 text-white">
+        Ничего не найдено.
+      </div>
+    );
   }
 
   return (
@@ -92,13 +104,19 @@ export default function SessionDetailPage() {
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold">{analysis.filename}</h1>
+
               <p className="mt-1 text-zinc-400">
                 Итерация: {analysis.current_iteration}
               </p>
+
               <p className="mt-1 text-zinc-400">
-                Тип сессии: {analysis.session_type}
+                Тип сессии:{" "}
+                {analysis.session_type === "match"
+                  ? "Подбор вакансий"
+                  : "Анализ резюме"}
               </p>
             </div>
+
             <StatusBadge status={analysis.status} />
           </div>
 
@@ -107,14 +125,35 @@ export default function SessionDetailPage() {
           )}
 
           {mode === "analysis" && (
-            <p className="text-zinc-300">{analysis.result.final_message}</p>
+            <>
+              {analysis.result.final_message && (
+                <p className="text-zinc-300">{analysis.result.final_message}</p>
+              )}
+
+              {analysis.result.status && (
+                <p className="mt-2 text-sm text-zinc-400">
+                  Статус обработки: {analysis.result.status}
+                </p>
+              )}
+            </>
           )}
         </div>
 
         {mode === "analysis" && (
-          <section>
-            <h2 className="mb-4 text-2xl font-bold">Результат анализа</h2>
-            <ResultErrorsList errors={analysis.result.errors} />
+          <section className="space-y-6">
+            <div>
+              <h2 className="mb-4 text-2xl font-bold">Результат анализа</h2>
+              <ResultErrorsList errors={analysis.result.errors} />
+            </div>
+
+            {analysis.result.improved_resume && (
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                <h3 className="mb-3 text-xl font-bold">Исправленное резюме</h3>
+                <pre className="whitespace-pre-wrap break-words text-sm leading-6 text-zinc-300">
+                  {analysis.result.improved_resume}
+                </pre>
+              </div>
+            )}
           </section>
         )}
 
@@ -124,7 +163,10 @@ export default function SessionDetailPage() {
 
             {!!matches?.skills_found.length && (
               <div className="mb-6 rounded-3xl border border-white/10 bg-white/5 p-5">
-                <p className="mb-3 text-sm font-semibold text-white">Найденные навыки</p>
+                <p className="mb-3 text-sm font-semibold text-white">
+                  Найденные навыки
+                </p>
+
                 <div className="flex flex-wrap gap-2">
                   {matches.skills_found.map((skill) => (
                     <span

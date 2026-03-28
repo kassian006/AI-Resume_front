@@ -34,6 +34,8 @@ export interface ResumeErrorItem {
 
 export interface ResumeAnalysisResult {
   greeting: string;
+  status: string;
+  improved_resume: string;
   errors: ResumeErrorItem[];
   final_message: string;
 }
