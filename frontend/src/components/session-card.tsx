@@ -6,9 +6,16 @@ export function SessionCard({ session }: { session: ResumeSessionListItem }) {
   return (
     <div className="flex items-center justify-between rounded-3xl border border-white/10 bg-white/5 p-5">
       <div>
-        <p className="text-base font-semibold text-white">{session.filename}</p>
+        <p className="text-base font-semibold text-white">
+          {session.filename}
+        </p>
+
         <p className="mt-1 text-sm text-zinc-400">
           Итерация: {session.current_iteration}
+        </p>
+
+        <p className="mt-1 text-sm text-zinc-500">
+          Тип: {session.session_type === "match" ? "Подбор вакансий" : "Анализ"}
         </p>
       </div>
 
